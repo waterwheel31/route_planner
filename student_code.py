@@ -1,5 +1,5 @@
 import math 
-
+import heapq
 
 
 def distance(M, point1, point2):
@@ -16,18 +16,13 @@ def shortest_path(M,start,goal):
      
     intersections = list(M.intersections.keys())
     
-    #f_values = {x : math.inf for x in intersections}
-    #g_values = {x : math.inf for x in intersections}
-    #h_values = {x : math.inf for x in intersections}
-    #routes = {x : [] for x in intersections}
-    
     f_values = {}
     g_values = {}
     h_values = {}
     routes = {}
     
-    explored = []
-    frontier = {}
+    explored = set()
+    frontier = []
     goal_min = math.inf
     frontier_min = math.inf
     path = []
@@ -45,7 +40,7 @@ def shortest_path(M,start,goal):
     routes[current_node] = route
     
     # Explore 
-    explored.append(current_node)
+    explored.add(current_node)
     
     # Search 
     while goal_min >= frontier_min :
@@ -74,17 +69,16 @@ def shortest_path(M,start,goal):
 
             if adj not in explored: 
                 if adj not in frontier: 
-                    frontier[adj] = f
+                    heapq.heappush(frontier, (f, adj))
 
         # Extend 
       
-        current_node, f = sorted(frontier.items(), key=lambda x: x[1])[0]
-        explored.append(current_node)
-        _ = frontier.pop(current_node)
+        f, current_node = heapq.heappop(frontier)
+        explored.add(current_node)
                 
         if len(frontier) <= 0: break
             
-        frontier_min = min(frontier.items(), key=lambda x: x[1]) [1]
+        frontier_min = frontier[0][0]
   
         
     return path
